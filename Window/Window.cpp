@@ -7,6 +7,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 // Function to fill the window with a white background
 void fillWindowWithWhite(HWND hWnd);
+void drawTextOnWindow(HWND hWnd);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
   // Create a window
@@ -46,7 +47,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       MessageBoxW(hWnd, L"Display resolution changed!", L"Info", MB_OK | MB_ICONINFORMATION);
       break;
     case WM_PAINT:
-      fillWindowWithWhite(hWnd);
+      //fillWindowWithWhite(hWnd);
+         drawTextOnWindow(hWnd);
       break;
     default:
       return DefWindowProc(hWnd, message, wParam, lParam);
@@ -67,4 +69,23 @@ void fillWindowWithWhite(HWND hWnd)
 
     EndPaint(hWnd, &ps);
     DeleteObject(hBrush);
+}
+
+void drawTextOnWindow(HWND hWnd) {
+    PAINTSTRUCT ps;
+    HDC hdc = BeginPaint(hWnd, &ps);
+
+    // Define the text you want to display
+    const wchar_t* textToDisplay = L"Hello, Windows!";
+
+    RECT clientRect;
+    GetClientRect(hWnd, &clientRect);
+
+    // Set text color
+    SetTextColor(hdc, RGB(0, 0, 0)); // Black color
+
+    // Use TextOutW to draw the text
+    TextOutW(hdc, clientRect.left + 10, clientRect.top + 10, textToDisplay, wcslen(textToDisplay));
+
+    EndPaint(hWnd, &ps);
 }
