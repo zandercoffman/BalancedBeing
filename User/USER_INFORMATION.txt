@@ -1,3 +1,0 @@
-name                            hasCompletedSetup
-
-User-FirstName, User-LastName, false, 
