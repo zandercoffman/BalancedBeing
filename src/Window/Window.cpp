@@ -1,6 +1,6 @@
 #include <windows.h>
 #include "WindowParameters.h"
-#include "..\..\Resources\Config\FirstProgramRun.cpp"
+#include "..\..\Resources\Config\FirstProgramRun.h"
 #include <cstdio>
 
 // Forward declaration of WndProc
@@ -9,18 +9,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 // Function to fill the window with a white background
 void fillWindowWithWhite(HWND hWnd);
 void drawTextOnWindow(HWND hWnd);
-void FirstProgramRun::setINIValuesAtStartup();
+void setINIValuesAtStartup();
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-
-  FirstProgramRun::setINIValuesAtStartup();
   // Create a window
   WNDCLASSA wc = {0}; // Use WNDCLASSA for ANSI character strings
   wc.lpfnWndProc = WndProc;
   wc.hInstance = hInstance;
   wc.lpszClassName = "MyWindowClass"; // Regular char string without 'L'
   RegisterClassA(&wc); // Use RegisterClassA for ANSI character strings
-
   // Create a window instance
   WindowParameters windowParams; // Create an instance of the WindowParameters class
   HWND hWnd = CreateWindowA("MyWindowClass", "My Window", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, // Use CreateWindowA for ANSI character strings
