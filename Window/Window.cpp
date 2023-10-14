@@ -11,21 +11,21 @@ void drawTextOnWindow(HWND hWnd);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
   // Create a window
-  WNDCLASS wc = {0};
+  WNDCLASSA wc = {0}; // Use WNDCLASSA for ANSI character strings
   wc.lpfnWndProc = WndProc;
   wc.hInstance = hInstance;
-  wc.lpszClassName = "MyWindowClass";
-  RegisterClass(&wc);
+  wc.lpszClassName = "MyWindowClass"; // Regular char string without 'L'
+  RegisterClassA(&wc); // Use RegisterClassA for ANSI character strings
 
   // Create a window instance
   WindowParameters windowParams; // Create an instance of the WindowParameters class
-  HWND hWnd = CreateWindow("MyWindowClass", "My Window", WS_OVERLAPPEDWINDOW,
+  HWND hWnd = CreateWindowA("MyWindowClass", "My Window", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, // Use CreateWindowA for ANSI character strings
                              CW_USEDEFAULT, CW_USEDEFAULT, windowParams.returnX(), windowParams.returnY(), NULL, NULL, hInstance, NULL);
 
   // Show the window
-  ShowWindow(hWnd, nCmdShow);
+  ShowWindow(hWnd, SW_SHOWNORMAL);
 
-  
+
   // Run the message loop
   MSG msg;
   while (GetMessage(&msg, NULL, 0, 0)) {
@@ -44,11 +44,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       PostQuitMessage(0);
       break;
     case WM_SIZE:
-      MessageBoxW(hWnd, L"Display resolution changed!", L"Info", MB_OK | MB_ICONINFORMATION);
+      MessageBoxA(hWnd, "Display resolution changed!", "Info", MB_OK | MB_ICONINFORMATION); // Use MessageBoxA for ANSI character strings
       break;
     case WM_PAINT:
-      //fillWindowWithWhite(hWnd);
-         drawTextOnWindow(hWnd);
+      drawTextOnWindow(hWnd);
       break;
     default:
       return DefWindowProc(hWnd, message, wParam, lParam);
@@ -59,6 +58,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 void fillWindowWithWhite(HWND hWnd)
 {
   PAINTSTRUCT ps;
+  fillWindowWithWhite(hWnd);
+  
     HDC hdc = BeginPaint(hWnd, &ps);
 
     RECT clientRect;
@@ -71,12 +72,13 @@ void fillWindowWithWhite(HWND hWnd)
     DeleteObject(hBrush);
 }
 
+
 void drawTextOnWindow(HWND hWnd) {
     PAINTSTRUCT ps;
     HDC hdc = BeginPaint(hWnd, &ps);
 
     // Define the text you want to display
-    const wchar_t* textToDisplay = L"Hello, Windows!";
+    const char* textToDisplay = "Hello, Windows!"; // Regular char string without 'L'
 
     RECT clientRect;
     GetClientRect(hWnd, &clientRect);
@@ -84,8 +86,25 @@ void drawTextOnWindow(HWND hWnd) {
     // Set text color
     SetTextColor(hdc, RGB(0, 0, 0)); // Black color
 
-    // Use TextOutW to draw the text
-    TextOutW(hdc, clientRect.left + 10, clientRect.top + 10, textToDisplay, wcslen(textToDisplay));
+    // Create a LOGFONTA structure for the custom font
+    LOGFONTA lf = {0}; // Use LOGFONTA for ANSI character strings
+    lf.lfHeight = 24;  // Set the desired font size
+    strcpy_s(lf.lfFaceName, "Syne-Regular"); // Use the font name without the file extension
+
+    // Create the custom font
+    HFONT hFont = CreateFontIndirectA(&lf); // Use CreateFontIndirectA for ANSI character strings
+
+    // Select the custom font into the device context
+    HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
+
+    // Use TextOutA to draw the text
+    TextOutA(hdc, clientRect.left + 10, clientRect.top + 10, textToDisplay, strlen(textToDisplay)); // Use TextOutA for ANSI character strings
+
+    // Don't forget to select the old font back into the HDC when you're done
+    SelectObject(hdc, hOldFont);
+
+    // Release the custom font handle when you're finished
+    DeleteObject(hFont);
 
     EndPaint(hWnd, &ps);
 }
