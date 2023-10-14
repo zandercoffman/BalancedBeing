@@ -1,5 +1,6 @@
 #include <windows.h>
 #include "WindowParameters.h"
+#include "..\..\Resources\Config\FirstProgramRun.cpp"
 #include <cstdio>
 
 // Forward declaration of WndProc
@@ -8,8 +9,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 // Function to fill the window with a white background
 void fillWindowWithWhite(HWND hWnd);
 void drawTextOnWindow(HWND hWnd);
+void FirstProgramRun::setINIValuesAtStartup();
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+
+  FirstProgramRun::setINIValuesAtStartup();
   // Create a window
   WNDCLASSA wc = {0}; // Use WNDCLASSA for ANSI character strings
   wc.lpfnWndProc = WndProc;
@@ -24,7 +28,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
   // Show the window
   ShowWindow(hWnd, SW_SHOWNORMAL);
-
 
   // Run the message loop
   MSG msg;
@@ -58,20 +61,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 void fillWindowWithWhite(HWND hWnd)
 {
   PAINTSTRUCT ps;
-  fillWindowWithWhite(hWnd);
-  
-    HDC hdc = BeginPaint(hWnd, &ps);
+  HDC hdc = BeginPaint(hWnd, &ps);
 
-    RECT clientRect;
-    GetClientRect(hWnd, &clientRect);
+  RECT clientRect;
+  GetClientRect(hWnd, &clientRect);
 
-    HBRUSH hBrush = CreateSolidBrush(RGB(255, 255, 255)); // White color
-    FillRect(hdc, &clientRect, hBrush);
+  HBRUSH hBrush = CreateSolidBrush(RGB(255, 255, 255)); // White color
+  FillRect(hdc, &clientRect, hBrush);
 
-    EndPaint(hWnd, &ps);
-    DeleteObject(hBrush);
+  EndPaint(hWnd, &ps);
+  DeleteObject(hBrush);
 }
-
 
 void drawTextOnWindow(HWND hWnd) {
     PAINTSTRUCT ps;
